@@ -1,0 +1,4 @@
+2025-12-05 12:20:26.524536: Error: [Errno 11001] getaddrinfo failed, Address Entered: skibbd
+2025-12-05 12:21:17.039273: Error: [Errno 11001] getaddrinfo failed, Address Entered: 222###
+2025-12-05 13:12:07.185738: Error: illegal IP address string passed to inet_aton; Address Entered: google.com
+2025-12-05 13:14:16.190138: Error: illegal IP address string passed to inet_aton; Address Entered: %%%

@@ -1,3 +1,21 @@
+# port_scanner.py
+
+# E. L. H. 
+
+# Tool designed for application in the field of cyber security utilising
+# socket for port checking and variable concurrency for scanning multiple 
+# ports within a reasonable time. Vulnerable or open ports are logged to 
+# open_ports.txt any errors incurred are logged to errors.txt for review.
+# Improvements can be made by using a more secure language like Rust as 
+# well as more detailed scanning option
+
+# Development of Version 1
+# began on the: 27/11/2025 
+# ended on the: 04/12/2025
+
+
+
+
 import socket
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
@@ -9,6 +27,7 @@ def debug_option(x, debug):
         print(x)
 
 #####-Visualiser-#####
+# Veriable menu used to display multiple options and take input
 def menu_pading(z, list, input_option):
     if z != "":
         print("".center(40,'-'))
@@ -27,7 +46,7 @@ def menu_pading(z, list, input_option):
         menu_option = input()
         print("".center(40,'-'))
         return menu_option
-
+# Displays error as well as a message
 def error_pading(message):
     print("".center(40,'-'))
     print("")
@@ -36,7 +55,7 @@ def error_pading(message):
     print("".center(40,'-'))
     print("".center(40,'-'))
     print(message.center(40,' '))
-
+# Displays result as well as a message
 def result_pading(message):
     print("".center(40,'-'))
     print("")
@@ -47,6 +66,7 @@ def result_pading(message):
     print(message.center(40,' '))
     
 #####-.txt Manipulation-#####
+# Appends line to .txt document 
 def write_to_text(y, x, debug):
     try:
         with open(x, 'a') as file:
@@ -64,18 +84,22 @@ def write_to_text(y, x, debug):
     debug_option("Text appended", debug)
 
 #####-Input Handeling-#####
+# Error handeling for int input 
 def input_port(text):
     end_loop = False
+    list = ["  ", text]
     while end_loop != True:
-        print(text)
+        menu_pading('', list, False)
         try:
             port_number = int(input())
         except Exception as e:
-            print(f"an error occured: {e}")
+            error_pading(f"{e}")
         else: 
-            end_loop = True
-            return port_number     
-
+            if port_number >= 1:
+                end_loop = True
+                return port_number  
+            error_pading("Out Of Range")   
+# Error handeling for str input
 def input_name(text):
     confirm_input = False
     while confirm_input != True:
@@ -89,15 +113,18 @@ def input_name(text):
             return name
 
 #####-IP Validation-#####
+# Evalutes IP address
 def resolve_ip(adres):
     try:
+        # Converts input IP to a host name 
         socket.gethostbyname(adres)
     except socket.gaierror:
+        # Displays error if IP does not have host name 
         error_pading(f"{adres}: Not A Valid IP")
         return False
     else:
         return adres
-
+# Error handeling for IP input 
 def input_ip_validator():
     confirm_input = False
     list = ["  ", "Enter host IP:"]
@@ -117,7 +144,7 @@ def input_ip_validator():
             if adres != False: 
                 confirm_input = True
                 return adres
-
+# Error handeling for host name
 def ip_name():
     end_option = False
     list = ["  ", "Enter Host Name:"]
@@ -125,8 +152,10 @@ def ip_name():
         try:
             menu_pading("Host Name", list, False)
             name = input_name("")
+            # Converts host name to IP
             host = socket.gethostbyname(name)
         except socket.error as e:
+            # Displays error if host name does not have IP
             error_pading("Error with host name")
             write_to_text(f"Error: {str(e)}, Address Entered: {name}", "errors.txt", debug)  
         else:
@@ -181,7 +210,7 @@ def port_check_range(host, start, stop, workers):
         result_pading(f"{len(open_ports)}: Ports Open: {open_ports}")
     else: 
         result_pading(f"Ports in Range: {start} -> {stop} Closed")
-#
+# Visualised individual port check
 def scan_port(host):
     # Scan port by number 
     confirm = False
@@ -195,20 +224,17 @@ def scan_port(host):
             port_check(host, port, True)
             confirm = True
         except:
-            debug_option("Error: No Port",1)
-
+            error_pading("No Port Exists")
+# Visualised concurent port check
 def scan_ports(host):
     # Scan ports in range
     confirm = False
     length = 0
-    #port_start = 0
-    #port_end = 0
     while confirm != True:
         while length < 1:
-            z = "Scan Ports in range"
-            list = ["  ", "Enter Start Point:"]
-            menu_pading(z, list, False)
-            port_start = input_port("")
+            list = ["  ", "Scan Ports in range"]
+            menu_pading("", list, False)
+            port_start = input_port("Enter Start Point:")
             list = ["  ", "Enter End Point:"]
             menu_pading("", list, False)
             port_end = input_port("")
@@ -235,6 +261,7 @@ def scan_ports(host):
             debug_option("Error: No Port",1)
 
 #####-Option Menu-######
+# Visualised host option menu
 def host_option():
     end_host = False
     while end_host != True:
@@ -250,7 +277,7 @@ def host_option():
                 host = True; return host
             case _:
                 error_pading("Invalid Option")       
-
+# Visualised port option menu
 def port_option(host):
     end_port = False
     while end_port != True:
@@ -279,6 +306,7 @@ while end != True:
     list = ["1:", "Port Scanner", "0:", "Exit"]
     quit_option = False
     menu_option = menu_pading(z, list, True)
+    # Allows exiting to main
     if menu_option == "1":
         host = host_option()
         if host != True:
