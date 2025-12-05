@@ -202,7 +202,6 @@ def port_check_range(host, start, stop, workers):
             for future in futures:
                 port = future.result()
                 if port is not None:
-                    write_to_text(f"Port: {port} is open. Host: {host}", "open_ports.txt", debug)
                     # Assigns open port number no list
                     open_ports.append(port)
     # Prints open ports if found
